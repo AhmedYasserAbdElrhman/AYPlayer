@@ -148,3 +148,28 @@ extension AYPlayer: URLSessionDelegate {
        completionHandler(.useCredential, urlCredential)
     }
 }
+
+
+// MARK:- Extensions
+extension Double {
+    // If you don't want your code crash on each overflow, use this function that operates on optionals
+    // E.g.: Int(Double(Int.max) + 1) will crash:
+    // fatal error: floating point value can not be converted to Int because it is greater than Int.max
+    func toInt() -> Int? {
+        if self > Double(Int.min) && self < Double(Int.max) {
+            return Int(self)
+        } else {
+            return nil
+        }
+    }
+}
+extension Float {
+    func toInt() -> Int? {
+        if self > Float(Int.min) && self < Float(Int.max) {
+            return Int(self)
+        } else {
+            return nil
+        }
+    }
+}
+
