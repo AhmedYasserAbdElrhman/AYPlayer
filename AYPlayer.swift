@@ -7,6 +7,10 @@
 import Foundation
 import AVFoundation
 
+protocol AYPlayerDelegate: class {
+    func currentTime(_ inSeconds: Float64,_ totalFormatted: String)
+}
+
 class AYPlayer: NSObject {
     
     enum Source {
@@ -39,15 +43,20 @@ class AYPlayer: NSObject {
     // MARK:- Variables
     private var url: URL
     private var audioPlayer = AVAudioPlayer()
+    private var audioPlayerIsReady = false
+    private var audioPlayClosure: (() -> Void)?
     private var streamPlayer: AVPlayer?
     private var source: Source = .local
     private var _currentTime: Float = 0
+    weak var delegate: AYPlayerDelegate?
     // MARK:- Init
     convenience override init() {
         self.init(url: URL(string: "")!)
     }
      init(url: URL) {
         self.url = url
+        self.audioPlayerIsReady = false
+        self.audioPlayClosure = nil
         super.init()
         // Check if the url is Streamable
         let asset = AVAsset(url: url)
@@ -78,6 +87,8 @@ class AYPlayer: NSObject {
             if self.streamPlayer?.currentItem?.status == .readyToPlay {
                 let time : Float64 = CMTimeGetSeconds(self.streamPlayer!.currentTime())
                 self._currentTime = Float(time)
+                guard let delegate = self.delegate else { return }
+                delegate.currentTime(time, "\(minuteString):\(secondString)")
             }
         }
 
@@ -90,9 +101,17 @@ class AYPlayer: NSObject {
             try session.setCategory(AVAudioSession.Category.playback)
             audioPlayer = try AVAudioPlayer(data: data)
             audioPlayer.volume = 1
+            audioPlayerIsReady = true
             let minuteString = String(format: "%02d", (Int(audioPlayer.duration) / 60))
             let secondString = String(format: "%02d", (Int(audioPlayer.duration) % 60))
             print("TOTAL TIMER: \(minuteString):\(secondString)")
+            audioPlayClosure?()
+            Timer(timeInterval: 1.0, repeats: audioPlayer.isPlaying) { [weak self] (timer) in
+                guard let `self` = self else {return}
+                guard self.audioPlayer.isPlaying else { timer.invalidate(); return }
+                guard let delegate = self.delegate else {return}
+                delegate.currentTime(Float64(self.currentTime), "\(minuteString):\(secondString)")
+            }.fire()
         } catch {
             print(error)
         }
@@ -133,7 +152,14 @@ class AYPlayer: NSObject {
         switch source {
         
         case .local:
+            if audioPlayerIsReady {
             audioPlayer.play()
+            } else {
+                audioPlayClosure = {[weak self] in
+                    guard let `self` = self else { return }
+                    self.audioPlayer.play()
+                }
+            }
         case .stream:
             guard let player = streamPlayer else { return }
             player.play()
