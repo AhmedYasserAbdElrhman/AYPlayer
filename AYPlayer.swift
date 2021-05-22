@@ -60,14 +60,16 @@ class AYPlayer: NSObject {
         super.init()
         // Check if the url is Streamable
         let asset = AVAsset(url: url)
-        if asset.isPlayable && asset.isReadable {
-            // Go with stream
-            prepareAVPlayer(url: url)
-            self.source = .stream
-        } else {
-            // Go with download
-            configureSession(url: url)
-            self.source = .local
+        DispatchQueue.global(qos: .background).async {
+            if asset.isPlayable && asset.isReadable {
+                // Go with stream
+                self.prepareAVPlayer(url: url)
+                self.source = .stream
+            } else {
+                // Go with download
+                self.configureSession(url: url)
+                self.source = .local
+            }
         }
 
     }
@@ -106,12 +108,14 @@ class AYPlayer: NSObject {
             let secondString = String(format: "%02d", (Int(audioPlayer.duration) % 60))
             print("TOTAL TIMER: \(minuteString):\(secondString)")
             audioPlayClosure?()
-            Timer(timeInterval: 1.0, repeats: audioPlayer.isPlaying) { [weak self] (timer) in
-                guard let `self` = self else {return}
-                guard self.audioPlayer.isPlaying else { timer.invalidate(); return }
-                guard let delegate = self.delegate else {return}
-                delegate.currentTime(Float64(self.currentTime), "\(minuteString):\(secondString)")
-            }.fire()
+            DispatchQueue.main.async {
+                _ = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                    guard self.audioPlayer.isPlaying else { timer.invalidate(); return }
+                    guard let delegate = self.delegate else {return}
+                    delegate.currentTime(Float64(self.currentTime), "\(minuteString):\(secondString)")
+                }
+            }
+
         } catch {
             print(error)
         }
