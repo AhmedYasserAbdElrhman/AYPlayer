@@ -22,7 +22,7 @@ pod 'AYPlayer'
 
 ## Author
 
-biko.yasser@gmail.com, biko.yasser@gmail.com
+Ahmad Yasser
 
 ## License
 
