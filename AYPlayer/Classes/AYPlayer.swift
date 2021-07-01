@@ -7,7 +7,7 @@
 import Foundation
 import AVFoundation
 
-protocol AYPlayerDelegate: class {
+protocol AYPlayerDelegate: NSObjectProtocol {
     func currentTime(_ inSeconds: Float64,_ totalFormatted: String)
 }
 
