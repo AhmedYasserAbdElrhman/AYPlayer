@@ -1,0 +1,22 @@
+{
+  "name": "AYPlayer",
+  "version": "0.1.0",
+  "summary": "A short description of AYPlayer.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/biko.yasser@gmail.com/AYPlayer",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "biko.yasser@gmail.com": "biko.yasser@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/biko.yasser@gmail.com/AYPlayer.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "9.0"
+  },
+  "source_files": "AYPlayer/Classes/**/*"
+}

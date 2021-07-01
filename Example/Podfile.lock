@@ -1,0 +1,16 @@
+PODS:
+  - AYPlayer (0.1.0)
+
+DEPENDENCIES:
+  - AYPlayer (from `../`)
+
+EXTERNAL SOURCES:
+  AYPlayer:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  AYPlayer: 2d746ba5dc99679dbf0fc931f16e3e7a3ccd2290
+
+PODFILE CHECKSUM: 0b77c30ad1d2747c4060fbc1dab01c368fd59849
+
+COCOAPODS: 1.10.1

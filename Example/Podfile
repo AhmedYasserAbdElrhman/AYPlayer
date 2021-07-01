@@ -1,0 +1,6 @@
+use_frameworks!
+target 'AYPlayer_Tests' do
+  pod 'AYPlayer', :path => '../'
+  
+  
+end
