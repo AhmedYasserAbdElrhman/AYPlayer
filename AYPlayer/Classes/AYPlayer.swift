@@ -7,11 +7,11 @@
 import Foundation
 import AVFoundation
 
-protocol AYPlayerDelegate: NSObjectProtocol {
+public protocol AYPlayerDelegate: NSObjectProtocol {
     func currentTime(_ inSeconds: Float64,_ totalFormatted: String)
 }
 
-class AYPlayer: NSObject {
+public final class AYPlayer: NSObject {
     
     enum Source {
         case local
@@ -40,6 +40,9 @@ class AYPlayer: NSObject {
         
     }
     
+    public weak var delegate: AYPlayerDelegate?
+
+    
     // MARK:- Variables
     private var url: URL
     private var audioPlayer = AVAudioPlayer()
@@ -48,12 +51,9 @@ class AYPlayer: NSObject {
     private var streamPlayer: AVPlayer?
     private var source: Source = .local
     private var _currentTime: Float = 0
-    weak var delegate: AYPlayerDelegate?
     // MARK:- Init
-    convenience override init() {
-        self.init(url: URL(string: "")!)
-    }
-     init(url: URL) {
+    
+     public init(url: URL) {
         self.url = url
         self.audioPlayerIsReady = false
         self.audioPlayClosure = nil
@@ -139,8 +139,9 @@ class AYPlayer: NSObject {
         downloadFileFromURL(url: url)
     }
 
+    // MARK:- Public Functions
 
-    func seek(to: Float) {
+    public func seek(to: Float) {
         switch source {
         
         case .local:
@@ -152,7 +153,7 @@ class AYPlayer: NSObject {
     }
     
     
-    func play() {
+    public func play() {
         switch source {
         
         case .local:
